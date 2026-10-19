@@ -1,5 +1,53 @@
 # Changelog
 
+## [1.9.0](https://github.com/mahmut-gundogdu/fluent-app/compare/v1.8.1...v1.9.0) (2026-10-19)
+
+
+### Features
+
+* add automatic releases with release-please ([a1e5951](https://github.com/mahmut-gundogdu/fluent-app/commit/a1e5951ccc4ba7c85d87799f260a0066c1006702))
+* add reset to defaults button for shortcut actions ([b366e4e](https://github.com/mahmut-gundogdu/fluent-app/commit/b366e4e5acf81896cc03e3da4703d5dddfd40e78))
+* add reset to defaults button for shortcut actions ([bbe480b](https://github.com/mahmut-gundogdu/fluent-app/commit/bbe480b44bbf501c8806a9f76408e26a832d19eb))
+* add Sparkle auto-update support ([5a7d087](https://github.com/mahmut-gundogdu/fluent-app/commit/5a7d087d064f04ce31444239505a00d717651b1c))
+* add Sparkle auto-update support ([d0529fd](https://github.com/mahmut-gundogdu/fluent-app/commit/d0529fdda993722d07e6d000b346169ec38ea465))
+* add website demo video ([16d9766](https://github.com/mahmut-gundogdu/fluent-app/commit/16d976600fe7a459be428e9406871dfc463bfebd))
+* close settings window on launch, show version in header ([f05d122](https://github.com/mahmut-gundogdu/fluent-app/commit/f05d1220340529bfdec80ee99d0d9e3f06178f15))
+* drop Intel support, simplify to Apple Silicon only ([6650b2c](https://github.com/mahmut-gundogdu/fluent-app/commit/6650b2cf670d3c84cf640a7e8d8c3dd2c39b2046))
+* **expo:** expand landing content and strengthen SEO ([3b9481a](https://github.com/mahmut-gundogdu/fluent-app/commit/3b9481a37dff465fa497c7066e50eaa7bdb99193))
+* harden app for public release ([b55f350](https://github.com/mahmut-gundogdu/fluent-app/commit/b55f3500d0027676ea85cbe3afe81550f5cec4ba))
+* Omarchy bar plugin for AI text shortcuts ([#31](https://github.com/mahmut-gundogdu/fluent-app/issues/31)) ([b6c6c1c](https://github.com/mahmut-gundogdu/fluent-app/commit/b6c6c1c8d6d60e1caafcae941b6db1d73c19fc1a))
+* polish demo site and hud spinner ([dcd8b67](https://github.com/mahmut-gundogdu/fluent-app/commit/dcd8b676cd45d105a8faa5aa70034c226e961d87))
+* refresh branding and website release flow ([1d216ec](https://github.com/mahmut-gundogdu/fluent-app/commit/1d216ecec9ebae3ce3bfd5c197a9e497654e5718))
+* simplify website messaging ([9aada90](https://github.com/mahmut-gundogdu/fluent-app/commit/9aada9011062ee6d5119e112d7ae518d1682deec))
+
+
+### Bug Fixes
+
+* add --repo flag and actions permission to release-please trigger ([aeb24d6](https://github.com/mahmut-gundogdu/fluent-app/commit/aeb24d608d68343e0e012e95617bbdfb3f4f4c6c))
+* bound Omarchy clipboard, HTTP, and stdin before parse ([#33](https://github.com/mahmut-gundogdu/fluent-app/issues/33)) ([483c320](https://github.com/mahmut-gundogdu/fluent-app/commit/483c320b5b1b3e91ae022b949719a347b14f8395))
+* bring Sparkle update dialog to front in menu bar app ([3b69197](https://github.com/mahmut-gundogdu/fluent-app/commit/3b6919744101b54f4b1abb44019c85b6fb37b679))
+* build both architectures on macos-14 ARM runner ([0cb346a](https://github.com/mahmut-gundogdu/fluent-app/commit/0cb346a8d5d0b84bbbcb1a9867a72e1b52415f4a))
+* derive CFBundleVersion from version for Sparkle updates ([4be69b2](https://github.com/mahmut-gundogdu/fluent-app/commit/4be69b270c4ac6899bce4e20b6586ca876878acc))
+* download Sparkle CLI tools directly in release workflow ([a9293ae](https://github.com/mahmut-gundogdu/fluent-app/commit/a9293aeeb4b0a8eed57af0fcbda62718dfe12516))
+* make coverage script portable in ci ([03e6c33](https://github.com/mahmut-gundogdu/fluent-app/commit/03e6c338315b8e995a332f7c43a870efabfc4734))
+* make release workflow dispatchable ([2744be6](https://github.com/mahmut-gundogdu/fluent-app/commit/2744be6a43ad2ed76ce6c397d47200926904e718))
+* never register launch-at-login from non-bundle executables ([#28](https://github.com/mahmut-gundogdu/fluent-app/issues/28)) ([213399e](https://github.com/mahmut-gundogdu/fluent-app/commit/213399e2623043769136458097f5e9af3c408b1d))
+* phantom empty settings window at launch + settings cleanup ([#26](https://github.com/mahmut-gundogdu/fluent-app/issues/26)) ([a1f0826](https://github.com/mahmut-gundogdu/fluent-app/commit/a1f082655a3c433cd423c322f1a4fedd70b466db))
+* polish release ui and feedback flows ([e05c120](https://github.com/mahmut-gundogdu/fluent-app/commit/e05c120d56502f9198c7dbd56b3dbe8ea3a1bed3))
+* replace retired Claude model causing 404 errors ([e126978](https://github.com/mahmut-gundogdu/fluent-app/commit/e1269788795a084a4bb58bcd1d6aa82617a4221c))
+* resolve Sparkle framework loading crash ([13e8ae9](https://github.com/mahmut-gundogdu/fluent-app/commit/13e8ae91066c3f9141d9183c7382e4ee0a9f0037))
+* settings window management and cleanup ([42cc478](https://github.com/mahmut-gundogdu/fluent-app/commit/42cc4786f953e1ea4f52cfdca7f6085f8c822e09))
+* show Claude API reason on 400 and skip whitespace-only selections ([2186853](https://github.com/mahmut-gundogdu/fluent-app/commit/2186853590ce3a25cec38b51ef3ab92314a7a674))
+* skip hardened runtime for ad-hoc signed local builds ([00e964e](https://github.com/mahmut-gundogdu/fluent-app/commit/00e964ee498e04b9b618dec8bad4a12645881ed0))
+* spinner rotation on its own center axis ([f158dbf](https://github.com/mahmut-gundogdu/fluent-app/commit/f158dbf68820f4eb658bff8fc5159199b6a77648))
+* stabilize coverage checks in ci ([bbd1cb5](https://github.com/mahmut-gundogdu/fluent-app/commit/bbd1cb55128370c779af4f7dba9c3d4d747f9b73))
+* store API keys in Keychain; clearer Claude 400 errors ([1c3cfff](https://github.com/mahmut-gundogdu/fluent-app/commit/1c3cfff8fb0734c08313eac809b79bd359953ee8))
+* store provider API keys in the macOS Keychain ([5464f2e](https://github.com/mahmut-gundogdu/fluent-app/commit/5464f2ed0e04c5db35eabfeeb2cf416e67bffa26))
+* streamline release flow so site links directly to DMGs ([a0fe057](https://github.com/mahmut-gundogdu/fluent-app/commit/a0fe05705776eba2ed8183af1c81fd53d7492994))
+* use only Apple Silicon DMG for appcast generation ([03a5455](https://github.com/mahmut-gundogdu/fluent-app/commit/03a545521eaa12f5f1c3e487f59ac2d98979f97b))
+* use printf instead of echo for Sparkle key file ([f95a98f](https://github.com/mahmut-gundogdu/fluent-app/commit/f95a98fbd6336a564eaf96f53e59b34e437417f3))
+* use temp file for Sparkle private key in CI ([56a22ff](https://github.com/mahmut-gundogdu/fluent-app/commit/56a22ff1fc338269b5322e631cf214161dc35a64))
+
 ## [1.8.1](https://github.com/alfonsobries/fluent-app/compare/v1.8.0...v1.8.1) (2026-07-09)
 
 
