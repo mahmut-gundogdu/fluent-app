@@ -57,15 +57,18 @@ public final class AppSettings: ObservableObject {
     public var onShortcutsChanged: (() -> Void)?
 
     private let userDefaults: UserDefaults
+    private let secretStore: SecretStore
     private let launchAtLoginController: LaunchAtLoginControlling
     private let providerFactory: AIProviderFactory
 
     public init(
         userDefaults: UserDefaults = .standard,
+        secretStore: SecretStore = InMemorySecretStore(),
         providerFactory: AIProviderFactory = .live,
         launchAtLoginController: LaunchAtLoginControlling = NoopLaunchAtLoginController()
     ) {
         self.userDefaults = userDefaults
+        self.secretStore = secretStore
         self.providerFactory = providerFactory
         self.launchAtLoginController = launchAtLoginController
 
@@ -78,7 +81,7 @@ public final class AppSettings: ObservableObject {
             selectedProvider = .openai
         }
 
-        apiKeys = Self.loadAPIKeys(from: userDefaults)
+        apiKeys = Self.loadAPIKeys(from: secretStore)
         shortcutActions = Self.loadShortcutActions(from: userDefaults)
 
         if userDefaults.object(forKey: Keys.launchAtStartup) != nil {
@@ -150,9 +153,17 @@ public final class AppSettings: ObservableObject {
         enabledActions.first { $0.keyCode == keyCode && $0.modifiers == modifiers }
     }
 
-    private func saveAPIKeys() {
-        let rawDictionary = Dictionary(uniqueKeysWithValues: apiKeys.map { ($0.key.rawValue, $0.value) })
-        userDefaults.set(rawDictionary, forKey: Keys.apiKeys)
+    @discardableResult
+    private func saveAPIKeys() -> Bool {
+        var saved = true
+        for provider in AIProviderType.allCases {
+            do {
+                try secretStore.setSecret(apiKeys[provider] ?? "", for: provider.rawValue)
+            } catch {
+                saved = false
+            }
+        }
+        return saved
     }
 
     private func saveShortcutActions() {
@@ -162,14 +173,10 @@ public final class AppSettings: ObservableObject {
         onShortcutsChanged?()
     }
 
-    private static func loadAPIKeys(from userDefaults: UserDefaults) -> [AIProviderType: String] {
-        guard let rawDictionary = userDefaults.dictionary(forKey: Keys.apiKeys) as? [String: String] else {
-            return [:]
-        }
-
-        return rawDictionary.reduce(into: [:]) { partialResult, element in
-            if let provider = AIProviderType(rawValue: element.key) {
-                partialResult[provider] = element.value
+    private static func loadAPIKeys(from secretStore: SecretStore) -> [AIProviderType: String] {
+        AIProviderType.allCases.reduce(into: [:]) { partialResult, provider in
+            if let key = secretStore.secret(for: provider.rawValue) {
+                partialResult[provider] = key
             }
         }
     }
@@ -202,6 +209,19 @@ public final class AppSettings: ObservableObject {
     }
 
     private func migrateLegacyValues() {
+        // Keys used to be stored in plain text in user defaults; move them to the secret store
+        // and only drop the plain-text copy once every write succeeded.
+        if let storedKeys = userDefaults.dictionary(forKey: Keys.apiKeys) as? [String: String] {
+            for (rawProvider, key) in storedKeys {
+                if let provider = AIProviderType(rawValue: rawProvider), apiKeys[provider]?.isEmpty ?? true {
+                    apiKeys[provider] = key
+                }
+            }
+            if saveAPIKeys() {
+                userDefaults.removeObject(forKey: Keys.apiKeys)
+            }
+        }
+
         if let legacyKey = userDefaults.string(forKey: Keys.legacyAPIKey), !legacyKey.isEmpty {
             if apiKeys[.openai]?.isEmpty ?? true {
                 apiKeys[.openai] = legacyKey
