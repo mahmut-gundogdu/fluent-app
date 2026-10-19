@@ -79,6 +79,16 @@ public final class ClaudeProvider: AIProvider {
             return .failure(.invalidAPIKey)
         case 429:
             return .failure(.rateLimited)
+        case 400:
+            // Surface the API's reason (e.g. invalid model, empty content) instead of a bare code.
+            guard
+                let json = try? JSONSerialization.jsonObject(with: response.0) as? [String: Any],
+                let error = json["error"] as? [String: Any],
+                let message = error["message"] as? String
+            else {
+                return .failure(.serverError(400))
+            }
+            return .failure(.unknown("Claude API error (400): \(message)"))
         default:
             return .failure(.serverError(response.1.statusCode))
         }

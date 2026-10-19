@@ -63,7 +63,10 @@ public final class AppController: ObservableObject {
 
         state = .processing(action.name)
 
-        guard let text = clipboardService.copySelectedText(), !text.isEmpty else {
+        guard
+            let text = clipboardService.copySelectedText(),
+            !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        else {
             state = .failed("No text selection was found.")
             return
         }

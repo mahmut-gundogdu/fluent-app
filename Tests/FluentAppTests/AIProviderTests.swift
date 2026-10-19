@@ -93,6 +93,12 @@ final class AIProviderTests: XCTestCase {
         client.nextResult = .success((Data(), httpResponse(statusCode: 429)))
         assert(provider.processResult(text: "hola", apiKey: "key", instructions: "inst"), equals: .failure(.rateLimited))
 
+        client.nextResult = .success((jsonData(["type": "error", "error": ["type": "invalid_request_error", "message": "bad input"]]), httpResponse(statusCode: 400)))
+        assert(provider.processResult(text: "hola", apiKey: "key", instructions: "inst"), equals: .failure(.unknown("Claude API error (400): bad input")))
+
+        client.nextResult = .success((Data(), httpResponse(statusCode: 400)))
+        assert(provider.processResult(text: "hola", apiKey: "key", instructions: "inst"), equals: .failure(.serverError(400)))
+
         client.nextResult = .success((Data(), httpResponse(statusCode: 500)))
         assert(provider.processResult(text: "hola", apiKey: "key", instructions: "inst"), equals: .failure(.serverError(500)))
 
