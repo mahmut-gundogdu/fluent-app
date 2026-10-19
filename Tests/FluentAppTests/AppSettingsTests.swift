@@ -20,7 +20,8 @@ final class AppSettingsTests: XCTestCase {
     }
 
     func testDefaultsLoadAndPersist() {
-        let settings = AppSettings(userDefaults: userDefaults)
+        let secretStore = InMemorySecretStore()
+        let settings = AppSettings(userDefaults: userDefaults, secretStore: secretStore)
 
         XCTAssertEqual(settings.selectedProvider, .openai)
         XCTAssertEqual(settings.shortcutActions.count, 3)
@@ -31,9 +32,42 @@ final class AppSettingsTests: XCTestCase {
         settings.setAPIKey("  abc123  ", for: .claude)
 
         XCTAssertEqual(userDefaults.string(forKey: AppSettings.Keys.selectedProvider), "claude")
-        let apiKeys = userDefaults.dictionary(forKey: AppSettings.Keys.apiKeys) as? [String: String]
-        XCTAssertEqual(apiKeys?["claude"], "abc123")
+        XCTAssertEqual(secretStore.secret(for: "claude"), "abc123")
+        XCTAssertNil(userDefaults.object(forKey: AppSettings.Keys.apiKeys))
         XCTAssertEqual(settings.currentAPIKey, "abc123")
+
+        settings.setAPIKey("", for: .claude)
+        XCTAssertNil(secretStore.secret(for: "claude"))
+    }
+
+    func testLoadsAPIKeysFromSecretStore() {
+        let secretStore = InMemorySecretStore(secrets: ["gemini": "g-key", "unknown": "ignored"])
+
+        let settings = AppSettings(userDefaults: userDefaults, secretStore: secretStore)
+
+        XCTAssertEqual(settings.apiKeys, [.gemini: "g-key"])
+    }
+
+    func testMigratesPlainTextAPIKeysToSecretStore() {
+        userDefaults.set(["openai": "one", "claude": "plain", "unknown": "x"], forKey: AppSettings.Keys.apiKeys)
+        let secretStore = InMemorySecretStore(secrets: ["claude": "from-store"])
+
+        let settings = AppSettings(userDefaults: userDefaults, secretStore: secretStore)
+
+        XCTAssertEqual(settings.apiKeys[.openai], "one")
+        XCTAssertEqual(settings.apiKeys[.claude], "from-store")
+        XCTAssertEqual(secretStore.secret(for: "openai"), "one")
+        XCTAssertNil(userDefaults.object(forKey: AppSettings.Keys.apiKeys))
+    }
+
+    func testKeepsPlainTextAPIKeysWhenSecretStoreFails() {
+        userDefaults.set(["openai": "one"], forKey: AppSettings.Keys.apiKeys)
+
+        let settings = AppSettings(userDefaults: userDefaults, secretStore: FailingSecretStore())
+
+        XCTAssertEqual(settings.apiKeys[.openai], "one")
+        let stored = userDefaults.dictionary(forKey: AppSettings.Keys.apiKeys) as? [String: String]
+        XCTAssertEqual(stored, ["openai": "one"])
     }
 
     func testLoadsSavedProviderAPIKeysAndActions() throws {

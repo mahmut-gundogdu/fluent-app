@@ -49,6 +49,16 @@ final class MockHotKeyManager: HotKeyManaging {
     }
 }
 
+struct FailingSecretStore: SecretStore {
+    func secret(for account: String) -> String? {
+        nil
+    }
+
+    func setSecret(_ secret: String, for account: String) throws {
+        throw NSError(domain: "FailingSecretStore", code: -1)
+    }
+}
+
 final class MockLaunchAtLoginController: LaunchAtLoginControlling {
     var isEnabled: Bool
     var receivedValues: [Bool] = []
